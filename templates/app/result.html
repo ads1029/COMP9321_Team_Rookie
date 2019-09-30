@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="'UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Bootstrap Stylesheet-->
+    <!--<link rel="stylesheet" href="css/bootstrap.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Suburb Information</title>
+    <!--<style>-->
+        <!--.col-center-block {-->
+            <!--float: none;-->
+            <!--display: block;-->
+            <!--margin-left: auto;-->
+            <!--margin-right: auto;-->
+        <!--}-->
+    <!--</style>-->
+{#    <style>#}
+{#       @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);#}
+{#body { margin: 50px; text-align: center; font-family: 'Open Sans', sans-serif; background: #f2fbff; }#}
+{#em { font-style: italic; }#}
+{#h1 { font-size: 24px; margin-bottom: 25px; font-weight: bold; text-transform: uppercase; }#}
+{#h2 { font-size: 16px; margin-bottom: 15px;}#}
+{#    </style>#}
+    <style>
+        .star-ratings-sprite {
+            background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
+            font-size: 0;
+            height: 21px;
+            line-height: 0;
+            overflow: hidden;
+            text-indent: -999em;
+            width: 110px;
+            margin: 0 auto;
+        }
+
+        .star-ratings-sprite-rating {
+          background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
+          background-position: 0 100%;
+          float: left;
+          height: 21px;
+          display: block;
+        }
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Suburb Information</h1>
+    <p>Switch different tabs to see contents</p>
+    <div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#overview" aria-controls="overview" aria-selected="true">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#crime" aria-controls="crime" aria-selected="false">Crime</a></li>
+            <li>
+                <a class="nav-link" data-toggle="tab" href="#acc" aria-controls="crime" aria-selected="false">Accommodation</a>
+            </li>
+            <li>
+                <a class="nav-link" data-toggle="tab" href="#poi" aria-controls="poi" aria-selected="false">POI</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div id="overview" class="tab-pane fade show active" aria-labelledby="home-tab">
+            <h3 class="col-center-block">Overview</h3>
+            <h4>{{suburb.name}} Summary</h4>
+            <div class="form-group">
+                <table>
+                    <tr>
+                        <td><h5>Summary</h5></td>
+                        <td><div class="star-ratings-sprite"><span style="width: {{ suburb.rates['all'] }}%" class="star-ratings-sprite-rating"></span></div></td>
+                        <td>({{ suburb.rates_value['all'] }} / 5.0 )</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Safety</h5></td>
+                        <td><div class="star-ratings-sprite"><span style="width: {{ suburb.rates['crime'] }}%" class="star-ratings-sprite-rating"></span></div></td>
+                        <td>({{ suburb.rates_value['crime'] }} / 5.0 )</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Rental</h5></td>
+                        <td><div class="star-ratings-sprite"><span style="width: {{ suburb.rates['acc'] }}%" class="star-ratings-sprite-rating"></span></div></td>
+                        <td>({{ suburb.rates_value['acc'] }} / 5.0 )</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Life Style</h5></td>
+                        <td><div class="star-ratings-sprite"><span style="width:{{ suburb.rates['poi'] }}%" class="star-ratings-sprite-rating"></span></div></td>
+                        <td>({{ suburb.rates_value['poi'] }} / 5.0 )</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <p>Photo Section</p>
+                {% for img in suburb.images[:3] %}
+                <img src="{{ img }}" class="img-fluid" alt="Responsive image" style="width: 50%">
+                {% endfor %}
+            </div>
+            <!--<p>From Wikipedia</p>-->
+            <!--<p>{{suburb.wiki}}.</p>-->
+            <div class="card">
+                <div class="card-title">From Wikipedia</div>
+                <div class="card-body" >
+                    {% for wiki in suburb.wiki %}
+                    {% if wiki.startswith('==') %}
+                    <p><h5>{{ wiki }}</h5></p>
+                    {% else %}
+                    <p style="word-wrap: break-word">{{ wiki }}</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <!--<p>Weather Section (from WeatherWidget.io) (Only static)</p>-->
+                <!--<div>-->
+                    <!--<a class="weatherwidget-io" href="https://forecast7.com/en/n33d92151d23/kingsford/" data-label_1="KINGSFORD" data-label_2="WEATHER" data-theme="original" >KINGSFORD WEATHER</a>-->
+                        <!--<script>-->
+                        <!--!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');-->
+                        <!--</script>-->
+                <!--</div>-->
+                <p>Weather Section (from accuweather.io) (location-based)</p>
+                <div id="weather">
+                    <a href="https://www.accuweather.com/en/au/kingsford/3496607/current-weather/3496607" class="aw-widget-legal">
+                    <!--
+                    By accessing and/or using this code snippet, you agree to AccuWeather’s terms and conditions (in English) which can be found at https://www.accuweather.com/en/free-weather-widgets/terms and AccuWeather’s Privacy Statement (in English) which can be found at https://www.accuweather.com/en/privacy.
+                    -->
+                    </a><div id="awtd1526997793562" class="aw-widget-36hour"  data-locationkey="22889" data-unit="f" data-language="en-us" data-useip="true" data-uid="awtd1526997793562" data-editlocation="true"></div><script type="text/javascript" src="https://oap.accuweather.com/launch.js"></script>
+                </div>
+            </div>
+            <!--<p>Crime stats goes here...</p>-->
+        </div>
+
+        <div id="crime" class="tab-pane fade" aria-labelledby="crime-tab">
+            <h3 class="col-center-block">Crime</h3>
+{#            <p>Crime details goes here...</p>#}
+            {% if not suburb.is_lga %}
+                <p>{{ suburb.name }} is under {{ suburb.lga }} council...</p>
+                <p>Showing data from {{ suburb.lga }}...</p>
+            {% endif %}
+{#            <p>{{suburb.crime_stats}}</p>#}
+            <h4>Summary</h4>
+            <p>The most frequent crime in this area is <b>{{ suburb.crime_stats['crime_type'] }}</b></p>
+            <h4>Trend (be careful of the rising crimes in this area)</h4>
+            {% if suburb.crime_stats['trend_24month_crime_type'] %}
+            <p>In the last 2 years, <b>{{ suburb.crime_stats['trend_24month_crime_type'] }}</b> is increasing most rapidly.</p>
+            {% else %}
+            <p>Sorry, no related data found from the source for the last 2 years trend.</p>
+            {% endif %}
+            {% if suburb.crime_stats['trend_60month_crime_type'] %}
+            <p>In the last 5 years, <b>{{ suburb.crime_stats['trend_60month_crime_type'] }}</b> is increasing most rapidly.</p>
+            {% else %}
+            <p>Sorry, no related data found from the source for the last 5 years trend.</p>
+            {% endif %}
+        </div>
+
+        <div id="acc" class="tab-pane fade" aria-labelledby="acc-tab">
+            <h3 class="col-center-block">Accommodation</h3>
+{#            <p>Accommodation details goes here...</p>#}
+            {% if suburb.is_lga %}
+                <p>Showing data from {{ suburb.lga }}</p>
+            {% endif %}
+            <img src="{{ url_for('app.send_figure', filename = suburb.acc_path) }}" class="img-fluid" alt="Responsive image" style="width: 50%; align-content: center">
+            <table>
+                <tr>
+                    <td><b>Type</b></td>
+                    <td><b>Average Rental</b></td>
+                </tr>
+                {% for e in suburb.acc_stats %}
+                <tr>
+                    <td>{{ e['type'] }}</td>
+                    <td>{{ e['average'] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div id="poi" class="tab-pane fade" aria-labelledby="poi-tab">
+            <h3 class="col-center-block">Places of Interests (POIs)</h3>
+{#            <p>POI details goes here...</p>#}
+{#            <p>{{suburb.poi}}</p>#}
+{#            <p>Here's a button linked to Google Map</p>#}
+            <div id="map"></div>
+            <img src="{{ url_for('app.send_figure', filename = suburb.poi_path) }}" class="img-fluid" alt="Responsive image" style="width: 50%; align-content: center">
+            <table>
+                <tr>
+                    <td><b>POI Name</b></td>
+                    <td><b>POI Type</b></td>
+                    <td><b>Google Map Link</b></td>
+                </tr>
+                {% for i in range(suburb.nb_of_pois) %}
+                    <tr>
+                        <td>{{ suburb.poi[i]['name'] }} </td>
+                        <td><i>{{ suburb.poi[i]['type'] }}</i></td>
+                        <td><a href="https://www.google.com.au/maps/search/{{ suburb.poi_urls[i] }}">{{ suburb.poi_locations[i] }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Google Map JavaScript -->
+<script>
+
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 3,
+          center: {lat: -28.024, lng: 140.887}
+        });
+
+        // Create an array of alphabetical characters used to label the markers.
+        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        // Add some markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        var markers = locations.map(function(location, i) {
+          return new google.maps.Marker({
+            position: location,
+            label: labels[i % labels.length]
+          });
+        });
+
+        // Add a marker clusterer to manage the markers.
+        var markerCluster = new MarkerClusterer(map, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      }
+      var locations = {{ suburb.poi_locations | tojson}}
+    {#console.log({{ locations | safe }})#}
+    {#console.log({{ suburb.poi_locations | tojson }})#}
+    </script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbdgCBSoXfep6LvrUsPRciIDc6ov9KceA&callback=initMap">
+    </script>
+
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
